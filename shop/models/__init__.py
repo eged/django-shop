@@ -1,6 +1,7 @@
+from productmodel import *
 from cartmodel import *
 from ordermodel import *
-from productmodel import *
+
 from shop.order_signals import *
 from shop.util.loader import load_class
 
