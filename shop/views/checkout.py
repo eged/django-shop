@@ -85,7 +85,7 @@ class CheckoutSelectionView(LoginMixin, ShopTemplateView):
                     # Instanciate a blank one, and use this as the default value for
                     # the form.
                     shipping_address = AddressModel()
-                
+
                 # Instanciate the form
                 form = form_class(instance=shipping_address, prefix="ship")
             setattr(self, '_shipping_form', form)
@@ -100,9 +100,8 @@ class CheckoutSelectionView(LoginMixin, ShopTemplateView):
         form = getattr(self, '_billing_form', None)
         if not form:
             # Create a dynamic Form class for the model specified as the address model
-            form_class = model_forms.modelform_factory(AddressModel,
-                                                       exclude=['user_shipping', 'user_billing'])
-            
+            form_class = self.get_billing_form_class()
+
             # Try to get a shipping address instance from the request (user or session))
             billing_address = get_billing_address_from_request(self.request)
             if self.request.method == "POST":
@@ -114,7 +113,7 @@ class CheckoutSelectionView(LoginMixin, ShopTemplateView):
                     # Instansiate a blank one, and use this as the default value for
                     # the form.
                     billing_address = AddressModel()
-                
+
                 #Instanciate the form
                 form = form_class(instance=billing_address, prefix="bill")
             setattr(self, '_billing_form', form)
@@ -154,9 +153,9 @@ class CheckoutSelectionView(LoginMixin, ShopTemplateView):
             order = self.create_order_object_from_cart()
 
             self.save_addresses_to_order(order, shipping_address, billing_address)
-            
+
             # The following marks addresses as being default addresses for shipping
-            # and billing. For more options (amazon style), we should remove this 
+            # and billing. For more options (amazon style), we should remove this
             assign_address_to_request(self.request, shipping_address, shipping=True)
             assign_address_to_request(self.request, billing_address, shipping=False)
 
