@@ -10,7 +10,7 @@ from shop.util.loader import load_class
 import django
 
 
-        
+
 #===============================================================================
 # Extensibility
 #===============================================================================
@@ -21,7 +21,7 @@ setting if it exists.
 # Order model
 ORDER_MODEL = getattr(settings, 'SHOP_ORDER_MODEL', 'shop.models.defaults.order.Order')
 Order = load_class(ORDER_MODEL, 'SHOP_ORDER_MODEL')
-    
+
 # Order item model
 ORDERITEM_MODEL = getattr(settings, 'SHOP_ORDERITEM_MODEL', 'shop.models.defaults.orderitem.OrderItem')
 OrderItem = load_class(ORDERITEM_MODEL, 'SHOP_ORDERITEM_MODEL')
@@ -55,10 +55,10 @@ class ExtraOrderPriceField(models.Model):
     This will make Cart-provided extra price fields persistent since we want
     to "snapshot" their statuses at the time when the order was made
     """
-    order = models.ForeignKey(Order, verbose_name=_('Order'))
+    order = models.ForeignKey(Order, verbose_name=_('Order'), related_name="extra_price_fields")
     label = models.CharField(max_length=255, verbose_name=_('Label'))
     value = CurrencyField(verbose_name=_('Amount'))
-    
+
     # Does this represent shipping costs?
     is_shipping = models.BooleanField(default=False, editable=False,
             verbose_name=_('Is shipping'))
@@ -77,7 +77,7 @@ class ExtraOrderItemPriceField(models.Model):
     order_item = models.ForeignKey(OrderItem, verbose_name=_('Order item'))
     label = models.CharField(max_length=255, verbose_name=_('Label'))
     value = CurrencyField(verbose_name=_('Amount'))
-    
+
     class Meta(object):
         app_label = 'shop'
         verbose_name = _('Extra order item price field')
@@ -85,19 +85,19 @@ class ExtraOrderItemPriceField(models.Model):
 
 
 class OrderPayment(models.Model):
-    """ 
-    A class to hold basic payment information. Backends should define their own 
+    """
+    A class to hold basic payment information. Backends should define their own
     more complex payment types should they need to store more informtion
     """
     order = models.ForeignKey(Order, verbose_name=_('Order'))
     amount = CurrencyField(verbose_name=_('Amount'))# How much was payed with this particular transfer
-    transaction_id = models.CharField(max_length=255, 
+    transaction_id = models.CharField(max_length=255,
             verbose_name=_('Transaction ID'),
             help_text=_("The transaction processor's reference"))
     payment_method = models.CharField(max_length=255,
             verbose_name=_('Payment method'),
             help_text=_("The payment backend use to process the purchase"))
-    
+
     class Meta(object):
         app_label = 'shop'
         verbose_name = _('Order payment')
